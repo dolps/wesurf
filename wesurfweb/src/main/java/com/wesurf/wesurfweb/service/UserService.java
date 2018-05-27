@@ -23,6 +23,8 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -194,11 +196,19 @@ public class UserService {
             // if IdP sends last updated information, use it to determine if an update should happen
             if (details.get("updated_at") != null) {
                 Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
-                Instant idpModifiedDate = new Date(Long.valueOf((Integer) details.get("updated_at"))).toInstant();
-                if (idpModifiedDate.isAfter(dbModifiedDate)) {
-                    log.debug("Updating user '{}' in local database...", user.getLogin());
-                    updateUser(user.getFirstName(), user.getLastName(), user.getEmail(),
-                        user.getLangKey(), user.getImageUrl());
+
+                try {
+                    DateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    Date date = df.parse((String) details.get("updated_at"));
+
+                    Instant idpModifiedDate = date.toInstant();
+                    if (idpModifiedDate.isAfter(dbModifiedDate)) {
+                        log.debug("Updating user '{}' in local database...", user.getLogin());
+                        updateUser(user.getFirstName(), user.getLastName(), user.getEmail(),
+                            user.getLangKey(), user.getImageUrl());
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
                 // no last updated info, blindly update
             } else {
