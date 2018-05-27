@@ -53,10 +53,10 @@ public class UserService {
      * Update basic information (first name, last name, email, language) for the current user.
      *
      * @param firstName first name of user
-     * @param lastName last name of user
-     * @param email email id of user
-     * @param langKey language key
-     * @param imageUrl image URL of user
+     * @param lastName  last name of user
+     * @param email     email id of user
+     * @param langKey   language key
+     * @param imageUrl  image URL of user
      */
     public void updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
         SecurityUtils.getCurrentUserLogin()
@@ -148,7 +148,7 @@ public class UserService {
      */
     public UserDTO getUserFromAuthentication(OAuth2Authentication authentication) {
         Map<String, Object> details = (Map<String, Object>) authentication.getUserAuthentication().getDetails();
-        User user = getUser(details);
+        User user = getStravaUser(details);
         Set<Authority> userAuthorities = extractAuthorities(authentication, details);
         user.setAuthorities(userAuthorities);
 
@@ -163,6 +163,28 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new UserDTO(syncUserWithIdP(details, user));
+    }
+
+    private User getStravaUser(Map<String, Object> details) {
+        User user = new User();
+
+        user.setActivated(true);
+        user.setLangKey("en");
+
+        user.setLogin((String) details.get("email"));
+        if (details.get("firstname") != null) {
+            user.setFirstName((String) details.get("firstname"));
+        }
+        if (details.get("lastname") != null) {
+            user.setLastName((String) details.get("lastname"));
+        }
+        if (details.get("email") != null) {
+            user.setEmail((String) details.get("email"));
+        }
+        if (details.get("profile") != null) {
+            user.setImageUrl((String) details.get("profile"));
+        }
+        return user;
     }
 
     private User syncUserWithIdP(Map<String, Object> details, User user) {
@@ -197,7 +219,7 @@ public class UserService {
         // create UserDetails so #{principal.username} works
         UserDetails userDetails =
             new org.springframework.security.core.userdetails.User(user.getLogin(),
-            "N/A", grantedAuthorities);
+                "N/A", grantedAuthorities);
         // update Spring Security Authorities to match groups claim from IdP
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
             userDetails, "N/A", grantedAuthorities);
@@ -222,6 +244,7 @@ public class UserService {
         return userAuthorities;
     }
 
+    @Deprecated // params not valid after switching to strava api for authentication
     private static User getUser(Map<String, Object> details) {
         User user = new User();
         user.setLogin((String) details.get("preferred_username"));
@@ -258,11 +281,11 @@ public class UserService {
 
     private static Set<Authority> authoritiesFromStringStream(Stream<String> strings) {
         return strings
-                    .map(string -> {
-                        Authority auth = new Authority();
-                        auth.setName(string);
-                        return auth;
-                    }).collect(Collectors.toSet());
+            .map(string -> {
+                Authority auth = new Authority();
+                auth.setName(string);
+                return auth;
+            }).collect(Collectors.toSet());
     }
 
 }
