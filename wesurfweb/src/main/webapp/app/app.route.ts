@@ -1,9 +1,13 @@
-import { Route } from '@angular/router';
+import {Route} from '@angular/router';
 
-import { NavbarComponent } from './layouts';
+import {NavbarComponent} from './layouts';
 
 export const navbarRoute: Route = {
     path: '',
     component: NavbarComponent,
     outlet: 'navbar'
+};
+export const oAuthRedirectRoute: Route = {
+    path: '_',
+    redirectTo: ''
 };
