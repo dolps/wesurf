@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -198,7 +199,7 @@ public class UserService {
                 Instant dbModifiedDate = existingUser.get().getLastModifiedDate();
 
                 try {
-                    DateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                     Date date = df.parse((String) details.get("updated_at"));
 
                     Instant idpModifiedDate = date.toInstant();
