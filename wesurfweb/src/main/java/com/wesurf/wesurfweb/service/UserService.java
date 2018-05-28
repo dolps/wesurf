@@ -9,6 +9,9 @@ import com.wesurf.wesurfweb.repository.UserRepository;
 import com.wesurf.wesurfweb.security.SecurityUtils;
 import com.wesurf.wesurfweb.service.dto.UserDTO;
 
+import com.wesurf.wesurfweb.strava.Strava;
+import com.wesurf.wesurfweb.strava.model.StravaActivity;
+import com.wesurf.wesurfweb.strava.template.StravaTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -20,6 +23,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -150,7 +154,14 @@ public class UserService {
      * @return the user from the authentication
      */
     public UserDTO getUserFromAuthentication(OAuth2Authentication authentication) {
+        OAuth2AuthenticationDetails autDetails = (OAuth2AuthenticationDetails) authentication.getDetails();
+        String stravaToken = autDetails.getTokenValue();
         Map<String, Object> details = (Map<String, Object>) authentication.getUserAuthentication().getDetails();
+        String stravaUserId = String.valueOf(details.get("id"));
+
+        testStravaApiCall(stravaToken);
+
+
         User user = getStravaUser(details);
         Set<Authority> userAuthorities = extractAuthorities(authentication, details);
         user.setAuthorities(userAuthorities);
@@ -166,6 +177,15 @@ public class UserService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return new UserDTO(syncUserWithIdP(details, user));
+    }
+
+    private void testStravaApiCall(String stravaToken) {
+        Strava strava = new StravaTemplate(stravaToken);
+        strava.activityOperations().getAllActivities().forEach(this::logActivities);
+    }
+
+    private void logActivities(StravaActivity stravaActivity) {
+        log.info("strava Activity: " + stravaActivity.getName());
     }
 
     private User getStravaUser(Map<String, Object> details) {
