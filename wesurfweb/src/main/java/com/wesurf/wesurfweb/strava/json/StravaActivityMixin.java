@@ -24,7 +24,6 @@ abstract class StravaActivityMixin extends StravaObjectMixin {
         @JsonProperty("distance") float distance,
         @JsonProperty("elapsed_time") long elapsedTime,
         @JsonProperty("start_date") String date,
-        @JsonProperty("map") StravaMap map,
-        @JsonProperty("segment_efforts") List<StravaSegmentEffort> segmentEfforts) {
+        @JsonProperty("map") StravaMap map) {
     }
 }

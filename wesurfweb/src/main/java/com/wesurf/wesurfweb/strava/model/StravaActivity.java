@@ -12,9 +12,8 @@ public class StravaActivity implements Serializable {
     private long elapsedTime;
     private String date;
     private StravaMap map;
-    private List<StravaSegmentEffort> segmentEfforts;
 
-    public StravaActivity(long id, String name, String type, String description, float distance, long elapsedTime, String date, StravaMap map, List<StravaSegmentEffort> segmentEfforts) {
+    public StravaActivity(long id, String name, String type, String description, float distance, long elapsedTime, String date, StravaMap map) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -23,7 +22,6 @@ public class StravaActivity implements Serializable {
         this.elapsedTime = elapsedTime;
         this.date = date;
         this.map = map;
-        this.segmentEfforts = segmentEfforts;
     }
 
     public StravaActivity(long id) {
@@ -62,7 +60,17 @@ public class StravaActivity implements Serializable {
         return map;
     }
 
-    public List<StravaSegmentEffort> getSegmentEfforts() {
-        return segmentEfforts;
+    @Override
+    public String toString() {
+        return "StravaActivity{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", description='" + description + '\'' +
+            ", distance=" + distance +
+            ", elapsedTime=" + elapsedTime +
+            ", date='" + date + '\'' +
+            ", map=" + map +
+            '}';
     }
 }

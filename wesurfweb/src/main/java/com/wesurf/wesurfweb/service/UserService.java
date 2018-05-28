@@ -185,7 +185,7 @@ public class UserService {
     }
 
     private void logActivities(StravaActivity stravaActivity) {
-        log.info("strava Activity: " + stravaActivity.getName());
+        log.info("strava Activity: " + stravaActivity.toString());
     }
 
     private User getStravaUser(Map<String, Object> details) {
