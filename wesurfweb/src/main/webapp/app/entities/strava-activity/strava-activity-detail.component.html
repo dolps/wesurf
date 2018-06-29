@@ -1,0 +1,42 @@
+
+<div *ngIf="stravaActivity">
+    <h2><span jhiTranslate="wesurfwebApp.stravaActivity.detail.title">Strava Activity</span> {{stravaActivity.id}}</h2>
+    <hr>
+    <wes-alert-error></wes-alert-error>
+    <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="wesurfwebApp.stravaActivity.name">Name</span></dt>
+        <dd>
+            <span>{{stravaActivity.name}}</span>
+        </dd>
+        <dt><span jhiTranslate="wesurfwebApp.stravaActivity.type">Type</span></dt>
+        <dd>
+            <span>{{stravaActivity.type}}</span>
+        </dd>
+        <dt><span jhiTranslate="wesurfwebApp.stravaActivity.description">Description</span></dt>
+        <dd>
+            <span>{{stravaActivity.description}}</span>
+        </dd>
+        <dt><span jhiTranslate="wesurfwebApp.stravaActivity.distance">Distance</span></dt>
+        <dd>
+            <span>{{stravaActivity.distance}}</span>
+        </dd>
+        <dt><span jhiTranslate="wesurfwebApp.stravaActivity.date">Date</span></dt>
+        <dd>
+            <span>{{stravaActivity.date}}</span>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            (click)="previousState()"
+            class="btn btn-info">
+        <span class="fa fa-arrow-left"></span>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button"
+            [routerLink]="['/', { outlets: { popup: 'strava-activity/'+ stravaActivity.id + '/edit'} }]"
+            replaceUrl="true"
+            queryParamsHandling="merge"
+            class="btn btn-primary">
+        <span class="fa fa-pencil"></span>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+    </button>
+</div>
